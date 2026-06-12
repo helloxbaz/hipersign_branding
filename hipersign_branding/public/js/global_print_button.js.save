@@ -1,0 +1,21 @@
+                        pdf_generator = r.message.pdf_generator;
+                    }
+
+                    let url =
+                        "/api/method/frappe.utils.print_format.download_pdf?" +
+                        "doctype=" + encodeURIComponent(frm.doctype) +
+                        "&name=" + encodeURIComponent(frm.doc.name) +
+                        "&format=" + encodeURIComponent(frm.meta.default_print_format || "") +
+                        "&no_letterhead=0" +
+                        "&settings=%7B%7D" +
+                        "&_lang=" + frappe.boot.lang +
+                        "&pdf_generator=" + pdf_generator;
+
+                    window.open(url);
+                }
+            });
+
+        });
+
+    }
+});

@@ -1,0 +1,25 @@
+/* --- LOADER / SPLASH SCREEN FIX --- */
+
+/* 1. Kill the original "E" Icon completely */
+.splash svg,
+.splash img,
+.centered-splash svg,
+.centered-splash img,
+.frappe-splash svg {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* 2. Force Hipersign logo onto the splash screen */
+.splash,
+.centered-splash,
+.frappe-splash {
+    background-image: url("/assets/hipersign_branding/images/hipersign-loader.png") !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 80px auto !important;
+}
+
