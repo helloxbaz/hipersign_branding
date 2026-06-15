@@ -4,6 +4,8 @@ app_publisher = "Hipersign Technologies"
 app_description = "Branding"
 app_email = "support@hipersignerp.com"
 app_license = "mit"
+after_install = "hipersign_branding.hipersign_branding.setup.apply_branding"
+after_migrate = "hipersign_branding.hipersign_branding.setup.apply_branding"
 
 # --- BRANDING OVERRIDES (Crucial for removing "E" logo) ---
 app_logo_url = "/assets/hipersign_branding/images/hipersign-loader.png"
