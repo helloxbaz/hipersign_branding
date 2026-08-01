@@ -25,7 +25,8 @@ website_context = {
 app_include_css = "/assets/hipersign_branding/css/branding.css"
 app_include_js = [
     "/assets/hipersign_branding/js/branding.js",
-    "/assets/hipersign_branding/js/global_print_button.js"
+    "/assets/hipersign_branding/js/global_print_button.js",
+    "/assets/hipersign_branding/js/pwa.js"
 ]
 # Document Events
 # ---------------
@@ -38,3 +39,20 @@ app_include_js = [
 # }
 
 
+doc_events = {
+	"WhatsApp Message": {
+		"after_insert": "hipersign_branding.whatsapp_hooks.sync_conversation"
+	},
+	"CRM Task": {
+		"after_insert": "hipersign_branding.task_notification_hooks.sync_task_fields_to_todo",
+		"on_update": "hipersign_branding.task_notification_hooks.sync_task_fields_to_todo"
+	}
+}
+
+scheduler_events = {
+	"cron": {
+		"*/5 * * * *": [
+			"hipersign_branding.task_notification_hooks.send_due_reminders"
+		]
+	}
+}
