@@ -82,11 +82,14 @@ def get_templates():
 
 @frappe.whitelist()
 def send_template(phone_number, template, params=None):
-    body_param = []
-    if params:
-        if isinstance(params, str):
-            params = json.loads(params)
-        body_param = params
+    if isinstance(params, str):
+        params = json.loads(params)
+
+    # frappe_whatsapp calls .values() on body_param — it must be a dict, not a list
+    if isinstance(params, (list, tuple)):
+        params = {str(i): v for i, v in enumerate(params, start=1)}
+    elif not isinstance(params, dict):
+        params = {}
 
     doc = frappe.get_doc({
         "doctype": "WhatsApp Message",
@@ -94,9 +97,9 @@ def send_template(phone_number, template, params=None):
         "to": phone_number,
         "use_template": 1,
         "template": template,
-        "body_param": json.dumps(body_param),
+        "body_param": json.dumps(params),
         "content_type": "text",
-        "message_type": "Template"
+        "message_type": "Template",
     })
     doc.insert(ignore_permissions=True)
     return doc.name
