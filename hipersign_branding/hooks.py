@@ -27,34 +27,6 @@ app_include_js = [
 	"/assets/hipersign_branding/js/pwa.js",
 ]
 
-# Fixtures
-# --------
-# The doc_events below read custom fields on CRM Task and ToDo. Without these
-# shipped as fixtures, a fresh install has the hooks but not the fields, and
-# the first CRM Task insert raises AttributeError — which breaks the ERPNext
-# setup wizard when it generates CRM demo data.
-fixtures = [
-	{
-		"dt": "Custom Field",
-		"filters": [
-			[
-				"name",
-				"in",
-				[
-					"CRM Task-custom_visit_type",
-					"CRM Task-custom_location",
-					"CRM Task-custom_send_whatsapp_reminder",
-					"CRM Task-custom_reminder_date",
-					"CRM Task-custom_reminder_sent",
-					"ToDo-custom_send_whatsapp_reminder",
-					"ToDo-custom_reminder_date",
-					"CRM Deal-erpnext_customer",
-				],
-			]
-		],
-	}
-]
-
 # Document Events
 # ---------------
 doc_events = {
