@@ -13,6 +13,9 @@ def _fields_present(doctype, fieldnames):
 	where someone removed them. Reading a missing field raises AttributeError
 	and, because these are doc_events, that aborts the document insert itself.
 	"""
+	if not frappe.db.exists("DocType", doctype):
+		return False
+
 	meta = frappe.get_meta(doctype)
 	return all(meta.has_field(f) for f in fieldnames)
 
