@@ -3,7 +3,7 @@
     if (!document.querySelector('link[rel="manifest"]')) {
       const link = document.createElement('link');
       link.rel = 'manifest';
-      link.href = '/manifest.json';
+      link.href = '/api/method/hipersign_branding.pwa.manifest';
       document.head.appendChild(link);
     }
     if ('serviceWorker' in navigator) {
