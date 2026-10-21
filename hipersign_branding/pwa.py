@@ -4,6 +4,7 @@ import mimetypes
 import frappe
 
 DEFAULT_ICON = "/assets/hipersign_branding/images/hipersign-loader.png"
+APP_NAME = "Hipersign ERP"
 
 
 def _single(doctype, field):
@@ -13,35 +14,24 @@ def _single(doctype, field):
 		return ""
 
 
-def _app_name():
-	name = _single("Website Settings", "app_name")
-	if not name:
-		name = _single("System Settings", "app_name")
-		if name.lower() == "frappe":
-			name = ""
-	if not name:
-		name = (frappe.local.site or "ERP").split(".")[0].replace("-", " ").title()
-	return name
-
-
 @frappe.whitelist(allow_guest=True, methods=["GET"])
 def manifest():
-	"""Per-site PWA manifest, so each site installs under its own name."""
-	name = _app_name()
+	"""Return a consistent PWA manifest for every Hipersign ERP site."""
 	logo = _single("Website Settings", "app_logo") or DEFAULT_ICON
 	icon_type = mimetypes.guess_type(logo)[0] or "image/png"
 
 	data = {
-		"name": name,
-		"short_name": name[:12],
+		"id": "/",
+		"name": APP_NAME,
+		"short_name": "Hipersign ERP",
+		"description": "Hipersign ERP",
 		"start_url": "/app",
 		"scope": "/",
 		"display": "standalone",
 		"background_color": "#ffffff",
-		"theme_color": "#2563eb",
+		"theme_color": "#000000",
 		"icons": [
-			{"src": logo, "sizes": "192x192", "type": icon_type},
-			{"src": logo, "sizes": "512x512", "type": icon_type},
+			{"src": logo, "sizes": "any", "type": icon_type},
 		],
 	}
 
