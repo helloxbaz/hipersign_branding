@@ -7,8 +7,8 @@
       document.head.appendChild(link);
     }
 
-    // Always replace any framework or cached manifest URL with the Hipersign endpoint.
-    link.href = '/api/method/hipersign_branding.pwa.manifest';
+    // A static JSON manifest avoids API response wrappers and is identical on every site.
+    link.href = '/manifest.json';
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
