@@ -10,25 +10,49 @@ frappe.ui.form.on('*', {
             frm.page.menu.find('[data-label="Download PDF"]').remove();
             frm.page.menu.find('[data-label="Share PDF"]').remove();
 
+            // Use the PDF Generator set on the print format (chrome / wkhtmltopdf).
+            // Hard-coding wkhtmltopdf broke designed formats that need Chrome.
+            const pdf_generators = {};
+            async function get_pdf_generator(format) {
+                if (!format || format === "Standard") return "wkhtmltopdf";
+                if (!(format in pdf_generators)) {
+                    try {
+                        let r = await frappe.db.get_value("Print Format", format, "pdf_generator");
+                        pdf_generators[format] = (r && r.message && r.message.pdf_generator) || "wkhtmltopdf";
+                    } catch (e) {
+                        pdf_generators[format] = "wkhtmltopdf";
+                    }
+                }
+                return pdf_generators[format];
+            }
+
+            // look it up now so Share stays fast (mobile share needs a quick tap response)
+            get_pdf_generator(frm.meta.default_print_format || "");
+
             // Generate PDF URL
-            function get_pdf_url() {
+            async function get_pdf_url() {
+                let format = frm.meta.default_print_format || "";
+                let generator = await get_pdf_generator(format);
                 return (
                     "/api/method/frappe.utils.print_format.download_pdf?" +
                     "doctype=" + encodeURIComponent(frm.doctype) +
                     "&name=" + encodeURIComponent(frm.doc.name) +
-                    "&format=" + encodeURIComponent(frm.meta.default_print_format || "") +
+                    "&format=" + encodeURIComponent(format) +
                     "&no_letterhead=0" +
                     "&settings=%7B%7D" +
                     "&_lang=" + frappe.boot.lang +
-                    "&pdf_generator=wkhtmltopdf"
+                    "&pdf_generator=" + encodeURIComponent(generator)
                 );
             }
 
             // -------------------------
             // 1️⃣ VIEW PDF
             // -------------------------
-            frm.page.add_menu_item(__('View PDF'), function () {
-                window.open(get_pdf_url(), "_blank");
+            frm.page.add_menu_item(__('View PDF'), async function () {
+                // open the tab first so the popup blocker allows it
+                let w = window.open("", "_blank");
+                let url = await get_pdf_url();
+                if (w) w.location.href = url; else window.open(url, "_blank");
             });
 
             // -------------------------
@@ -37,7 +61,7 @@ frappe.ui.form.on('*', {
             frm.page.add_menu_item(__('Download PDF'), async function () {
 
                 try {
-                    let response = await fetch(get_pdf_url());
+                    let response = await fetch(await get_pdf_url());
                     let blob = await response.blob();
 
                     let link = document.createElement("a");
@@ -61,7 +85,7 @@ frappe.ui.form.on('*', {
 
                 try {
 
-                    let response = await fetch(get_pdf_url());
+                    let response = await fetch(await get_pdf_url());
                     let blob = await response.blob();
 
                     let file = new File(
